@@ -1,0 +1,13 @@
+html {
+  @apply antialiased;
+}
+
+table thead tr {
+  @apply border-b border-gray-300;
+}
+
+table th,
+table td {
+  min-width: 64px;
+  @apply px-3 py-2;
+}
