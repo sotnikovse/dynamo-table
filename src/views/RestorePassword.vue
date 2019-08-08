@@ -1,6 +1,11 @@
 <template>
   <div class="w-full max-w-sm mx-auto py-10">
-    <form class="bg-white sm:shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    <form
+      ref="form"
+      :class="{ 'was-validated': wasValidated }"
+      class="bg-white sm:shadow-md rounded px-8 pt-6 pb-8 mb-4"
+      novalidate
+    >
       <div class="mb-6">
         <div class="text-xl">
           Restore password
@@ -14,12 +19,18 @@
           Email *
         </label>
         <input
-          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          v-model="model.email"
           id="email"
           type="email"
           name="email"
           placeholder="Email"
+          required
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-2 leading-tight focus:outline-none focus:shadow-outline"
+          :class="{ 'border-red-500': formErrors.email }"
+          @input="checkField"
+          @keyup.enter="onSubmit"
         >
+        <p v-if="formErrors.email" class="text-red-500 text-xs italic">{{ formErrors.email }}</p>
       </div>
       <div>
         <button
@@ -35,8 +46,11 @@
 </template>
 
 <script>
+import FormValidation from '@/mixins/FormValidation'
+
 export default {
   name: 'RestorePassword',
+  mixins: [FormValidation],
   data () {
     return {
       model: {
@@ -45,8 +59,20 @@ export default {
     }
   },
   methods: {
-    onSubmit () {
-      //
+    async onSubmit (e) {
+      try {
+        this.wasValidated = true
+        const isValid = await this.validate()
+        if (isValid) {
+          e.preventDefault()
+          // TODO
+        } else {
+          e.preventDefault()
+          e.stopPropagation()
+        }
+      } catch (error) {
+        throw new Error(error)
+      }
     },
   }
 }
