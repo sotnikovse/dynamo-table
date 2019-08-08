@@ -9,15 +9,7 @@
       </router-link>
     </div>
     <div class="flex-grow flex items-center justify-end">
-      <div v-if="isGuest">
-        <router-link
-          :to="{ name: 'signin' }"
-          class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-purple-500 hover:bg-white"
-        >
-          Log in
-        </router-link>
-      </div>
-      <template v-else>
+      <template v-if="isLoggedIn">
         <div class="hidden sm:block text-gray-300">
           Username
         </div>
@@ -28,22 +20,33 @@
           Sign out
         </button>
       </template>
+      <div v-else>
+        <router-link
+          :to="{ name: 'signin' }"
+          class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-purple-500 hover:bg-white"
+        >
+          Log in
+        </router-link>
+      </div>
     </div>
   </nav>
 </template>
 
 <script>
+import { Auth } from 'aws-amplify'
+
 export default {
   name: 'Navbar',
   computed: {
-    isGuest () {
-      return true
+    isLoggedIn () {
+      return this.$store.getters.loggedIn
     },
   },
   methods: {
-    onSignOut () {
-      //
-      this.$router.replace({ name: 'home' })
+    async onSignOut () {
+      await Auth.signOut()
+      this.$store.commit('setUser')
+      this.$router.replace({ name: 'signin' })
     }
   }
 }

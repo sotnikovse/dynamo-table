@@ -6,9 +6,9 @@
       class="bg-white sm:shadow-md rounded px-8 pt-6 pb-8 mb-4"
       novalidate
     >
-      <div class="mb-6">
+      <div class="flex items-center justify-between mb-6">
         <div class="text-xl">
-          Restore password
+          Confirm email
         </div>
       </div>
       <div
@@ -23,9 +23,9 @@
         />
       </div>
       <div class="mb-4">
-        Please enter the email address associated with your account and we'll email you a password reset link.
+        Please enter the code sent to the email address.
       </div>
-      <div class="mb-6">
+      <div class="mb-4">
         <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
           Email *
         </label>
@@ -43,7 +43,26 @@
         >
         <p v-if="formErrors.email" class="text-red-500 text-xs italic">{{ formErrors.email }}</p>
       </div>
-      <div>
+      <div class="mb-6">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="code">
+          Code *
+        </label>
+        <input
+          v-model="model.code"
+          id="code"
+          type="number"
+          name="code"
+          placeholder="Code"
+          required
+          minlength="8"
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-2 leading-tight focus:outline-none focus:shadow-outline"
+          :class="{ 'border-red-500': formErrors.code }"
+          @input="checkField"
+          @keyup.enter="onSubmit"
+        >
+        <p v-if="formErrors.code" class="text-red-500 text-xs italic">{{ formErrors.code }}</p>
+      </div>
+      <div class="flex items-center justify-between">
         <button
           type="button"
           class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
@@ -61,13 +80,14 @@ import { Auth } from 'aws-amplify'
 import FormValidation from '@/mixins/FormValidation'
 
 export default {
-  name: 'RestorePassword',
+  name: 'ConfirmEmail',
   mixins: [FormValidation],
   data () {
     return {
       errorMessage: '',
       model: {
         email: '',
+        code: '',
       }
     }
   },
@@ -78,8 +98,10 @@ export default {
         const isValid = await this.validate()
         if (isValid) {
           e.preventDefault()
-          const response = await Auth.forgotPassword(this.model.email)
+          this.errorMessage = ''
+          const response = await Auth.confirmSignUp(this.model.email, this.model.code)
           console.log(response)
+          this.$router.push({ name: 'signin' })
         } else {
           e.preventDefault()
           e.stopPropagation()

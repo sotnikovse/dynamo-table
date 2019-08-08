@@ -11,23 +11,34 @@
           Create account
         </div>
       </div>
+      <div
+        v-if="errorMessage"
+        class="mb-6"
+      >
+        <Alert
+          title="Error"
+          :value="!!errorMessage"
+          :message="errorMessage"
+          @input="errorMessage = ''"
+        />
+      </div>
       <div class="mb-4">
-        <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="name">
           Username *
         </label>
         <input
-          v-model="model.email"
-          id="username"
-          name="username"
+          v-model="model.name"
+          id="name"
+          name="name"
           type="text"
           placeholder="Username"
           required
           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-2 leading-tight focus:outline-none focus:shadow-outline"
-          :class="{ 'border-red-500': formErrors.username }"
+          :class="{ 'border-red-500': formErrors.name }"
           @input="checkField"
           @keyup.enter="onSubmit"
         >
-        <p v-if="formErrors.username" class="text-red-500 text-xs italic">{{ formErrors.username }}</p>
+        <p v-if="formErrors.name" class="text-red-500 text-xs italic">{{ formErrors.name }}</p>
       </div>
       <div class="mb-4">
         <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
@@ -80,6 +91,7 @@
 </template>
 
 <script>
+import { Auth } from 'aws-amplify'
 import FormValidation from '@/mixins/FormValidation'
 
 export default {
@@ -87,8 +99,9 @@ export default {
   mixins: [FormValidation],
   data () {
     return {
+      errorMessage: '',
       model: {
-        username: '',
+        name: '',
         password: '',
         email: '',
       }
@@ -101,12 +114,24 @@ export default {
         const isValid = await this.validate()
         if (isValid) {
           e.preventDefault()
-          // TODO
+          this.errorMessage = ''
+          const { name, email, password } = this.model
+          const response = await Auth.signUp({
+            username: email,
+            password,
+            attributes: {
+              name,
+              email
+            }
+          });
+          this.$router.push({ name: 'confirm-email' })
+          console.log(response)
         } else {
           e.preventDefault()
           e.stopPropagation()
         }
       } catch (error) {
+        this.errorMessage = error.message || error
         throw new Error(error)
       }
     },

@@ -1,0 +1,20 @@
+{
+    "appName": "dynamotablepinpoint",
+    "roleName": "pinpointLambdaRole82c5772d",
+    "cloudWatchPolicyName": "cloudWatchPolicy82c5772d",
+    "pinpointPolicyName": "pinpointPolicy82c5772d",
+    "authPolicyName": "pinpoint_amplify_82c5772d",
+    "unauthPolicyName": "pinpoint_amplify_82c5772d",
+    "authRoleName": {
+        "Ref": "AuthRoleName"
+    },
+    "unauthRoleName": {
+        "Ref": "UnauthRoleName"
+    },
+    "authRoleArn": {
+        "Fn::GetAtt": [
+            "AuthRole",
+            "Arn"
+        ]
+    }
+}

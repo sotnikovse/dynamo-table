@@ -1,0 +1,19 @@
+{
+    "local": {
+        "awscloudformation": {
+            "AuthRoleName": "dynamo-table-local-20190808092717-authRole",
+            "UnauthRoleArn": "arn:aws:iam::116241841072:role/dynamo-table-local-20190808092717-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::116241841072:role/dynamo-table-local-20190808092717-authRole",
+            "Region": "us-east-1",
+            "DeploymentBucketName": "dynamo-table-local-20190808092717-deployment",
+            "UnauthRoleName": "dynamo-table-local-20190808092717-unauthRole",
+            "StackName": "dynamo-table-local-20190808092717",
+            "StackId": "arn:aws:cloudformation:us-east-1:116241841072:stack/dynamo-table-local-20190808092717/47356510-b973-11e9-8adb-0a16600979f0"
+        },
+        "categories": {
+            "auth": {
+                "dynamotableb653c220": {}
+            }
+        }
+    }
+}

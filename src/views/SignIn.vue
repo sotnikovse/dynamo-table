@@ -19,6 +19,17 @@
           </router-link>
         </div>
       </div>
+      <div
+        v-if="errorMessage"
+        class="mb-6"
+      >
+        <Alert
+          title="Error"
+          :value="!!errorMessage"
+          :message="errorMessage"
+          @input="errorMessage = ''"
+        />
+      </div>
       <div class="mb-4">
         <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
           Email *
@@ -76,6 +87,7 @@
 </template>
 
 <script>
+import { Auth } from 'aws-amplify'
 import FormValidation from '@/mixins/FormValidation'
 
 export default {
@@ -83,6 +95,7 @@ export default {
   mixins: [FormValidation],
   data () {
     return {
+      errorMessage: '',
       model: {
         email: '',
         password: '',
@@ -96,12 +109,17 @@ export default {
         const isValid = await this.validate()
         if (isValid) {
           e.preventDefault()
-          // TODO
+          this.errorMessage = ''
+          const user = await Auth.signIn(this.model.email, this.model.password)
+          console.log(user)
+          this.$store.commit('setUser', user)
+          this.$router.push({ name: 'home' })
         } else {
           e.preventDefault()
           e.stopPropagation()
         }
       } catch (error) {
+        this.errorMessage = error.message || error
         throw new Error(error)
       }
     },

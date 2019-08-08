@@ -10,7 +10,7 @@
       <template v-slot:item="{ item }">
         <td>
           <div
-            contenteditable="true"
+            :contenteditable="isLoggedIn"
             @input="onInput"
             @blur="onChange(item)"
           >
@@ -19,7 +19,7 @@
         </td>
         <td>
           <div
-            contenteditable="true"
+            :contenteditable="isLoggedIn"
             @input="onInput"
             @blur="onChange(item)"
           >
@@ -28,7 +28,7 @@
         </td>
         <td>
           <div
-            contenteditable="true"
+            :contenteditable="isLoggedIn"
             @input="onInput"
             @blur="onChange(item)"
           >
@@ -37,7 +37,7 @@
         </td>
         <td>
           <div
-            contenteditable="true"
+            :contenteditable="isLoggedIn"
             @input="onInput"
             @blur="onChange(item)"
           >
@@ -50,13 +50,8 @@
 </template>
 
 <script>
-import DataTable from '@/components/DataTable.vue'
-
 export default {
   name: 'Home',
-  components: {
-    DataTable
-  },
   data () {
     return {
       inputValue: '',
@@ -102,6 +97,11 @@ export default {
           col3: 'Col 33',
         }
       ]
+    }
+  },
+  computed: {
+    isLoggedIn () {
+      return this.$store.getters.loggedIn
     }
   },
   methods: {

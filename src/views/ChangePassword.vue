@@ -11,6 +11,17 @@
           Change password
         </div>
       </div>
+      <div
+        v-if="errorMessage"
+        class="mb-6"
+      >
+        <Alert
+          title="Error"
+          :value="!!errorMessage"
+          :message="errorMessage"
+          @input="errorMessage = ''"
+        />
+      </div>
       <div class="mb-4">
         <label class="block text-gray-700 text-sm font-bold mb-2" for="old-password">
           Old password *
@@ -83,6 +94,7 @@
 </template>
 
 <script>
+import { Auth } from 'aws-amplify'
 import FormValidation from '@/mixins/FormValidation'
 
 export default {
@@ -90,6 +102,7 @@ export default {
   mixins: [FormValidation],
   data () {
     return {
+      errorMessage: '',
       model: {
         oldPassword: '',
         newPassword: '',
@@ -104,12 +117,20 @@ export default {
         const isValid = await this.validate()
         if (isValid) {
           e.preventDefault()
-          // TODO
+          this.errorMessage = ''
+          const user = await Auth.currentAuthenticatedUser()
+          const response = await Auth.changePassword(
+            user,
+            this.model.oldPassword,
+            this.model.newPassword
+          )
+          console.log(response)
         } else {
           e.preventDefault()
           e.stopPropagation()
         }
       } catch (error) {
+        this.errorMessage = error.message || error
         throw new Error(error)
       }
     },
