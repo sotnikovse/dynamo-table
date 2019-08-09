@@ -11,3 +11,10 @@ table td {
   min-width: 64px;
   @apply px-3 py-2;
 }
+
+/* Описать в одельном файле */
+.button:disabled,
+button[disabled] {
+  color: #a7a7a7;
+  background-color: #7c7c7c!important;
+}

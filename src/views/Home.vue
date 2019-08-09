@@ -1,6 +1,6 @@
 <template>
   <div class="container py-6">
-    <h1 class="text-2xl font-semibold mb-4">
+    <!-- <h1 class="text-2xl font-semibold mb-4">
       Simple Datatable
     </h1>
     <DataTable
@@ -45,15 +45,74 @@
           </div>
         </td>
       </template>
-    </DataTable>
+    </DataTable> -->
+
+    <div v-if="isLoggedIn" class="todos pb-5">
+      <div class="py-5">
+        <amplify-connect
+          :mutation="createTodoMutation"
+          @done="onCreateFinished"
+        >
+          <template slot-scope="{ loading, mutate }">
+            <input
+              v-model="name"
+              type="text"
+              placeholder="Name"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-2 leading-tight focus:outline-none focus:shadow-outline"
+            >
+            <!-- <input
+              v-model="description"
+              type="textarea"
+              placeholder="Description"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-2 leading-tight focus:outline-none focus:shadow-outline"
+            > -->
+            <button
+              :disabled="loading"
+              type="button"
+              class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              @click="mutate"
+            >
+              Create
+            </button>
+          </template>
+        </amplify-connect>
+        
+      </div>
+      <amplify-connect
+        :query="listTodosQuery"
+        :subscription="createTodoSubscription"
+        :onSubscriptionMsg="onMessage"
+      >
+        <template slot-scope="{ loading, data, errors }">
+          <div v-if="loading">Loading...</div>
+
+          <div v-else-if="errors.length > 0">
+            {{ data }}
+          </div>
+
+          <div v-else-if="data">
+            <TodoList :items="data.listTodos.items" />
+          </div>
+        </template>
+      </amplify-connect>
+    </div>
+    <div v-else>
+      Log in!
+    </div>
   </div>
 </template>
 
 <script>
+import { ListTodosQuery } from '@/graphql/queries'
+import { CreateTodoMutation } from '@/graphql/mutations'
+import { OnCreateAndUpdateTodoSubscription } from '@/graphql/subscriptions'
+
 export default {
   name: 'Home',
   data () {
     return {
+      name: '',
+      description: '',
       inputValue: '',
       simpleHeaders: [
         {
@@ -102,9 +161,36 @@ export default {
   computed: {
     isLoggedIn () {
       return this.$store.getters.loggedIn
-    }
+    },
+    listTodosQuery() {
+      return this.$Amplify.graphqlOperation(ListTodosQuery)
+    },
+    createTodoSubscription() {
+      return this.$Amplify.graphqlOperation(OnCreateAndUpdateTodoSubscription)
+    },
+    createTodoMutation() {
+      return this.$Amplify.graphqlOperation(CreateTodoMutation,
+        { name: this.name, description: this.description })
+    },
   },
   methods: {
+    onCreateFinished () {
+      console.log('Todo created!')
+      this.name = ''
+      this.description = ''
+    },
+    onMessage (prevData, newData) {
+      if (newData.onCreateTodo) {
+        prevData.data.listTodos.items.push(newData.onCreateTodo)
+      } else if (newData.onUpdateTodo) {
+        // TODO не обновлять, если было обновлено текущим пользователем?
+        const updatedTodo = newData.onUpdateTodo
+        const index = prevData.data.listTodos.items
+          .findIndex(el => el.id === updatedTodo.id)
+        prevData.data.listTodos.items.splice(index, 1, updatedTodo)
+      }
+      return prevData.data
+    },
     onInput (e) {
       this.inputValue = e.target.innerText
     },

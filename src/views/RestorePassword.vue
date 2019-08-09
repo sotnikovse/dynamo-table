@@ -45,6 +45,7 @@
       </div>
       <div>
         <button
+          :disabled="loading"
           type="button"
           class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           @click="onSubmit"
@@ -65,6 +66,7 @@ export default {
   mixins: [FormValidation],
   data () {
     return {
+      loading: false,
       errorMessage: '',
       model: {
         email: '',
@@ -74,6 +76,7 @@ export default {
   methods: {
     async onSubmit (e) {
       try {
+        this.loading = true
         this.wasValidated = true
         const isValid = await this.validate()
         if (isValid) {
@@ -87,6 +90,8 @@ export default {
       } catch (error) {
         this.errorMessage = error.message || error
         throw new Error(error)
+      } finally {
+        this.loading = false
       }
     },
   }
