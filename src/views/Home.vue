@@ -175,6 +175,7 @@ export default {
   },
   methods: {
     onCreateFinished () {
+      // eslint-disable-next-line
       console.log('Todo created!')
       this.name = ''
       this.description = ''
@@ -195,6 +196,7 @@ export default {
       this.inputValue = e.target.innerText
     },
     onChange (item) {
+      // eslint-disable-next-line
       console.log('item', item)
       this.inputValue = ''
     }

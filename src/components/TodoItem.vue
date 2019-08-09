@@ -30,9 +30,11 @@ export default {
       const updatedTodo = await API.graphql(
         graphqlOperation(UpdateTodoMutation, { id: this.item.id, name: val })
       )
+      // eslint-disable-next-line
       console.log(updatedTodo)
     },
     onUpdateFinished () {
+      // eslint-disable-next-line
       console.log('Update finished!')
     },
   }

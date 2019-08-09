@@ -127,6 +127,7 @@ export default {
             this.model.oldPassword,
             this.model.newPassword
           )
+          // eslint-disable-next-line
           console.log(response)
         } else {
           e.preventDefault()

@@ -82,6 +82,7 @@ export default {
         if (isValid) {
           e.preventDefault()
           const response = await Auth.forgotPassword(this.model.email)
+          // eslint-disable-next-line
           console.log(response)
         } else {
           e.preventDefault()

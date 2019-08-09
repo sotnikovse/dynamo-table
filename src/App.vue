@@ -33,6 +33,7 @@ export default {
   },
   mounted () {
     AmplifyEventBus.$on('authState', info => {
+      // eslint-disable-next-line
       console.log(`Here is the auth event that was just emitted by an Amplify component: ${info}`)
     });
   },
@@ -47,6 +48,7 @@ export default {
         this.$store.commit('setUser', user)
       } catch (error) {
         if (error === 'not authenticated') {
+          // eslint-disable-next-line
           console.log(error)
         } else {
           throw new Error(error)

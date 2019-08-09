@@ -128,6 +128,7 @@ export default {
             }
           });
           this.$router.push({ name: 'confirm-email' })
+          // eslint-disable-next-line
           console.log(response)
         } else {
           e.preventDefault()

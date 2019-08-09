@@ -103,6 +103,7 @@ export default {
           e.preventDefault()
           this.errorMessage = ''
           const response = await Auth.confirmSignUp(this.model.email, this.model.code)
+          // eslint-disable-next-line
           console.log(response)
           this.$router.push({ name: 'signin' })
         } else {

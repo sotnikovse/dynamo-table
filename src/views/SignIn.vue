@@ -114,6 +114,7 @@ export default {
           e.preventDefault()
           this.errorMessage = ''
           const user = await Auth.signIn(this.model.email, this.model.password)
+          // eslint-disable-next-line
           console.log(user)
           this.$store.commit('setUser', user)
           this.$router.push({ name: 'home' })
